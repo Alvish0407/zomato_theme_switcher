@@ -62,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   }
 
   void _handleAnimationStatus(AnimationStatus status) {
-    if (status == AnimationStatus.completed) {
+    if (status.isCompleted) {
       setState(() {
         isAnimating = false;
         currentTheme = targetTheme;
@@ -99,7 +99,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 return ClipPath(
                   clipper: WaveClipper(
                     progress: _animation.value,
-                    waveHeight: 200,
                   ),
                   child: Container(
                     color: targetTheme ? darkBg : lightBg,

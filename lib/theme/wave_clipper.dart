@@ -4,41 +4,26 @@ import 'package:flutter/material.dart';
 
 class WaveClipper extends CustomClipper<Path> {
   final double progress;
-  final double waveHeight;
-  final bool isReversed;
 
-  WaveClipper({
-    required this.progress,
-    this.waveHeight = 200,
-    this.isReversed = false,
-  });
+  WaveClipper({required this.progress});
 
   @override
   Path getClip(Size size) {
     final path = Path();
+    // Center Bottom of the screen
     final center = Offset(size.width / 2, size.height);
+    // Pythagorean theorem (a² + b² = c²)
+    // This ensures the circle will be large enough to cover the screen diagonally
     final maxRadius = math.sqrt(size.width * size.width + size.height * size.height);
     final currentRadius = maxRadius * progress;
 
-    if (isReversed) {
-      // For dark to light (top to bottom)
-      path.addOval(
-        Rect.fromCenter(
-          center: Offset(size.width / 2, 0),
-          width: currentRadius * 2,
-          height: currentRadius * 2,
-        ),
-      );
-    } else {
-      // For light to dark (bottom to top)
-      path.addOval(
-        Rect.fromCenter(
-          center: center,
-          width: currentRadius * 2,
-          height: currentRadius * 2,
-        ),
-      );
-    }
+    path.addOval(
+      Rect.fromCenter(
+        center: center,
+        width: currentRadius * 2,
+        height: currentRadius * 2,
+      ),
+    );
 
     return path;
   }
