@@ -18,6 +18,9 @@ class ThemeProvider extends ChangeNotifier {
     appBarTheme: AppBarTheme(
       backgroundColor: Color.fromRGBO(244, 246, 250, 1),
     ),
+    iconTheme: IconThemeData(
+      color: Color.fromRGBO(112, 119, 137, 1),
+    ),
     scaffoldBackgroundColor: Color.fromRGBO(244, 246, 250, 1),
     colorScheme: ColorScheme.light(
       surface: Colors.white,
@@ -29,6 +32,9 @@ class ThemeProvider extends ChangeNotifier {
     primaryColor: Color.fromRGBO(58, 127, 74, 1),
     appBarTheme: AppBarTheme(
       backgroundColor: Color.fromRGBO(24, 23, 29, 1),
+    ),
+    iconTheme: IconThemeData(
+      color: Color.fromRGBO(204, 203, 206, 1),
     ),
     scaffoldBackgroundColor: Color.fromRGBO(24, 23, 29, 1),
     colorScheme: ColorScheme.dark(

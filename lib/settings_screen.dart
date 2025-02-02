@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:zomato_theme_switcher/extensions.dart';
+import 'package:zomato_theme_switcher/squircle.dart';
 import 'package:zomato_theme_switcher/theme_switcher.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -27,14 +28,76 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             child: SafeArea(
               child: Column(
+                spacing: 20,
                 children: [
                   _UserDetailsCard(),
+                  _ActionTile(
+                    icon: Icons.sync,
+                    title: "App update available",
+                  ),
+                  _ActionTile(
+                    icon: Icons.person_outline,
+                    title: "Your profile",
+                  ),
+                  _ActionTile(
+                    icon: Icons.color_lens_outlined,
+                    title: "Appearance",
+                  ),
+                  _ActionTile(
+                    icon: Icons.star_border_rounded,
+                    title: "Your rating",
+                  ),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _ActionTile extends StatelessWidget {
+  const _ActionTile({
+    required this.icon,
+    required this.title,
+  });
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Squircle(
+      radius: 44,
+      child: Container(
+        padding: EdgeInsets.all(12),
+        color: context.colorScheme.surface,
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: context.theme.scaffoldBackgroundColor,
+              ),
+              child: Icon(icon, size: 20),
+            ),
+            SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                title,
+                style: context.textTheme.bodyLarge?.copyWith(
+                  letterSpacing: 0.2,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            SizedBox(width: 16),
+            Icon(CupertinoIcons.chevron_right, size: 16),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -46,12 +109,8 @@ class _UserDetailsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final goldColor = Color.fromRGBO(242, 218, 175, 1);
 
-    return ClipPath(
-      clipper: ShapeBorderClipper(
-        shape: ContinuousRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(44)),
-        ),
-      ),
+    return Squircle(
+      radius: 44,
       child: Container(
         color: context.colorScheme.surface,
         child: Column(
