@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zomato_theme_switcher/theme_provider.dart';
 
@@ -71,6 +72,16 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
         previousTheme = Theme.of(context);
       });
       _controller.reset();
+
+      _toggleSystemUI(themeProvider.isLightTheme);
+    }
+  }
+
+  void _toggleSystemUI(bool isLightTheme) {
+    if (isLightTheme) {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    } else {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     }
   }
 

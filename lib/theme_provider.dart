@@ -9,6 +9,8 @@ class ThemeProvider extends ChangeNotifier {
 
   ThemeData get themeData => _themeData;
 
+  bool get isLightTheme => _themeData.brightness == Brightness.light;
+
   static final lightTheme = ThemeData(
     colorScheme: ColorScheme.light(
       surface: Color.fromRGBO(246, 247, 252, 1),
