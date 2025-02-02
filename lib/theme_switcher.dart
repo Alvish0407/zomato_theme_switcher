@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zomato_theme_switcher/theme_provider.dart';
-
-import 'theme/wave_clipper.dart';
+import 'package:zomato_theme_switcher/wave_clipper.dart';
 
 /// Call the callback to trigger the theme change animation.
 ///
@@ -20,6 +19,8 @@ import 'theme/wave_clipper.dart';
 /// ```
 typedef ThemeSwitcherBuilder = Widget Function(
   BuildContext context,
+  VoidCallback changeTheme,
+  ThemeData theme,
 );
 
 /// A widget that allows you to transition between the previous and current theme.
@@ -47,11 +48,12 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
 
   late ThemeData previousTheme;
 
+  ThemeData get currentTheme => Theme.of(context);
+
   @override
   void initState() {
     super.initState();
     themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    themeProvider.addListener(_toggleTheme);
 
     previousTheme = themeProvider.themeData;
 
@@ -69,7 +71,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
   void _handleAnimationStatus(AnimationStatus status) {
     if (status.isCompleted) {
       setState(() {
-        previousTheme = Theme.of(context);
+        previousTheme = currentTheme;
       });
       _controller.reset();
 
@@ -88,8 +90,10 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
   void _toggleTheme() {
     if (_controller.isAnimating) return;
 
+    themeProvider.toggleTheme();
+
     setState(() {
-      previousTheme = Theme.of(context);
+      previousTheme = currentTheme;
     });
 
     _controller.forward();
@@ -102,19 +106,21 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
         Theme(
           data: previousTheme,
           child: Builder(builder: (ctx) {
-            return widget.builder(ctx);
+            return widget.builder(ctx, _toggleTheme, previousTheme);
           }),
         ),
         //
         if (_controller.isAnimating)
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return ClipPath(
-                clipper: WaveClipper(progress: _animation.value),
-                child: widget.builder(context),
-              );
-            },
+          IgnorePointer(
+            child: AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return ClipPath(
+                  clipper: WaveClipper(progress: _animation.value),
+                  child: widget.builder(context, _toggleTheme, currentTheme),
+                );
+              },
+            ),
           ),
       ],
     );
