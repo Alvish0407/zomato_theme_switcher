@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zomato_theme_switcher/theme_provider.dart';
 
 import 'theme/wave_clipper.dart';
 
@@ -17,7 +19,6 @@ import 'theme/wave_clipper.dart';
 /// ```
 typedef ThemeSwitcherBuilder = Widget Function(
   BuildContext context,
-  VoidCallback notifyThemeChange,
 );
 
 /// A widget that allows you to transition between the previous and current theme.
@@ -25,14 +26,12 @@ class ThemeSwitcher extends StatefulWidget {
   const ThemeSwitcher({
     super.key,
     required this.builder,
-    required this.themeData,
     this.curve = Curves.easeInOutCubic,
     this.duration = Durations.extralong2,
   });
 
   final Curve curve;
   final Duration duration;
-  final ThemeData themeData;
   final ThemeSwitcherBuilder builder;
 
   @override
@@ -40,6 +39,8 @@ class ThemeSwitcher extends StatefulWidget {
 }
 
 class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProviderStateMixin {
+  late final ThemeProvider themeProvider;
+
   late final Animation<double> _animation;
   late final AnimationController _controller;
 
@@ -48,7 +49,10 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    previousTheme = widget.themeData;
+    themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    themeProvider.addListener(_toggleTheme);
+
+    previousTheme = themeProvider.themeData;
 
     _controller = AnimationController(
       duration: widget.duration,
@@ -64,7 +68,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
   void _handleAnimationStatus(AnimationStatus status) {
     if (status.isCompleted) {
       setState(() {
-        previousTheme = widget.themeData;
+        previousTheme = Theme.of(context);
       });
       _controller.reset();
     }
@@ -74,7 +78,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
     if (_controller.isAnimating) return;
 
     setState(() {
-      previousTheme = widget.themeData;
+      previousTheme = Theme.of(context);
     });
 
     _controller.forward();
@@ -87,7 +91,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
         Theme(
           data: previousTheme,
           child: Builder(builder: (ctx) {
-            return widget.builder(ctx, _toggleTheme);
+            return widget.builder(ctx);
           }),
         ),
         //
@@ -97,7 +101,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
             builder: (context, child) {
               return ClipPath(
                 clipper: WaveClipper(progress: _animation.value),
-                child: widget.builder(context, _toggleTheme),
+                child: widget.builder(context),
               );
             },
           ),
@@ -108,6 +112,7 @@ class _ThemeSwitcherState extends State<ThemeSwitcher> with SingleTickerProvider
   @override
   void dispose() {
     super.dispose();
+    themeProvider.removeListener(_toggleTheme);
     _controller.removeStatusListener(_handleAnimationStatus);
     _controller.dispose();
   }
