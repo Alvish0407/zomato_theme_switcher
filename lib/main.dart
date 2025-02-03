@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Zomato Theme Switcher',
             theme: theme,
+            debugShowCheckedModeBanner: false,
             home: const SettingsScreen(),
           );
         },
